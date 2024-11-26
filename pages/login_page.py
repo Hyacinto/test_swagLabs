@@ -1,6 +1,7 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import csv
 
 class Login:
     def __init__(self, driver):
@@ -9,7 +10,6 @@ class Login:
         self.password_input = (By.ID, "password")
         self.login_button = (By.ID, "login-button")
         self.usernames = self.driver.find_element(By.ID, "login_credentials").text.split("\n")[1:]
-        self.password = (By.CSS_SELECTOR, ".login_password").text
         
     def enter_username(self, username):
         WebDriverWait(self.driver, 1).until(
@@ -32,5 +32,10 @@ class Login:
     def login(self, username, password):
         self.enter_username(username)
         self.enter_password(password)
-        self.click_login_button(self)
+        self.click_login_button()
 
+    @property
+    def password(self):
+        element = self.driver.find_element(By.XPATH, "//div[@class='login_password']")
+        full_text = element.text
+        return full_text.split(":")[-1].strip()

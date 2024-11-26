@@ -1,35 +1,47 @@
-import csv
-from unittest import TestCase
+import pytest
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
-from ..pages.login_page import Login
-from ..pages.utilities import Utilities
+from pages.login_page import Login
+from pages.utilities import Utilities
 
-class Test_CalculatorTest(TestCase):
+# Helper function to initialization of Selenium and the data extraction
+def init_browser_and_get_data():
+    options = Options()
+    options.headless = True
+    driver = webdriver.Firefox(options=options)
+    driver.get("https://www.saucedemo.com/")
+    login_page = Login(driver)
+    usernames = login_page.usernames
+    password = login_page.password
+    return driver, login_page, usernames, password
 
-    @classmethod
-    def setUp(cls):
-        options = Options()
-        options.headless = True  
-        cls.driver = webdriver.Firefox(options=options)
-        cls.driver.get("https://www.saucedemo.com/")
-        cls.login_page = Login(cls.driver)
-       
-    @classmethod
-    def tearDown(cls):
-        if cls.driver.current_url == "https://www.saucedemo.com/inventory.html":
-            Utilities.logout(cls.driver)
-        cls.driver.quit()
+@pytest.fixture(scope="class")
+def setup_teardown():
+    driver, login_page, usernames, password = init_browser_and_get_data()
 
-    def test_login(self):
-        expected_result = False
-        for username in self.login_page.usernames:
-            self.login_page.login(self,username,self.login_page.password)
+    yield driver, login_page, usernames, password
 
-            if username == "locked_out_user":
-                expected_result = True
+    driver.quit()
 
-            self.assertEqual(self.login_page.error_message(self), expected_result)  
+# Dynamic parametering
+def pytest_generate_tests(metafunc):
+    if "username" in metafunc.fixturenames:
+        _, _, usernames, _ = init_browser_and_get_data()
+        metafunc.parametrize("username", usernames)
 
+# Test function
+def test_login(username, setup_teardown):
+    driver, login_page, usernames, password = setup_teardown
 
+    expected_result = False
+    if username == "locked_out_user":
+        expected_result = True
+
+    # Login
+    login_page.login(username, password)
+    assert login_page.error_message() == expected_result
+
+    # Logout, after a successful login
+    if driver.current_url == "https://www.saucedemo.com/inventory.html":
+        Utilities.logout(driver)
 
