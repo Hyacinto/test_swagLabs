@@ -48,72 +48,42 @@ class Inventory:
 
         return product_img_links
     
-    def price_10(self):
-        prices = [float(price.text.replace("$", "")) for price in self.prices]
-        return sorted(prices, reverse=True)
-    
-    def price_01(self):
-        prices = [float(price.text.replace("$", "")) for price in self.prices]
-        return sorted(prices)
+    def expected_list(self,list,is_reverse):
+        
+        if list == "price":
+            return sorted([float(price.text.replace("$", "")) for price in self.prices], reverse=is_reverse)
+        return sorted([name.text for name in self.links_to_products], reverse=is_reverse)
 
-    def item_name_ZA(self):
-        names = [name.text for name in self.links_to_products]
-        return sorted(names, reverse=True)
-    
-    def item_name_AZ(self):
-        names = [name.text for name in self.links_to_products]
-        return sorted(names)
-    
-    def select_AZ(self):
+    def select(self,index,element):
         self.select_element = self.driver.find_element(By.CLASS_NAME, "product_sort_container")
         self.dropdown = Select(self.select_element)
-        self.dropdown.select_by_index(0)
-        WebDriverWait(self.driver, 10).until( EC.presence_of_all_elements_located((By.CSS_SELECTOR, "*[data-test='inventory-item-name']")) )
-        self.links_to_products = self.driver.find_elements(By.CSS_SELECTOR, "*[data-test='inventory-item-name']")
-        return [name.text for name in self.links_to_products]
-    
-    def select_ZA(self):
-        self.select_element = self.driver.find_element(By.CLASS_NAME, "product_sort_container")
-        self.dropdown = Select(self.select_element)
-        self.dropdown.select_by_index(1)
-        WebDriverWait(self.driver, 10).until( EC.presence_of_all_elements_located((By.CSS_SELECTOR, "*[data-test='inventory-item-name']")) )
-        self.links_to_products = self.driver.find_elements(By.CSS_SELECTOR, "*[data-test='inventory-item-name']")
-        return [name.text for name in self.links_to_products]
-    
-    def select_01(self):
-        self.select_element = self.driver.find_element(By.CLASS_NAME, "product_sort_container")
-        self.dropdown = Select(self.select_element)
-        self.dropdown.select_by_index(2)
-        WebDriverWait(self.driver, 10).until( EC.presence_of_all_elements_located((By.CSS_SELECTOR, "*[data-test='inventory-item-price']")) )
-        self.prices = self.driver.find_elements(By.CSS_SELECTOR, "*[data-test='inventory-item-price']")
-        return [float(price.text.replace("$", "")) for price in self.prices]
-    
-    def select_10(self):
-        self.select_element = self.driver.find_element(By.CLASS_NAME, "product_sort_container")
-        self.dropdown = Select(self.select_element)
-        self.dropdown.select_by_index(3)
-        WebDriverWait(self.driver, 10).until( EC.presence_of_all_elements_located((By.CSS_SELECTOR, "*[data-test='inventory-item-price']")) )
-        self.prices = self.driver.find_elements(By.CSS_SELECTOR, "*[data-test='inventory-item-price']")
-        return [float(price.text.replace("$", "")) for price in self.prices]
+        self.dropdown.select_by_index(index)
+        WebDriverWait(self.driver, 10).until( EC.presence_of_all_elements_located((By.CSS_SELECTOR, f"*[data-test='inventory-item-{element}']")) )
+        list = self.driver.find_elements(By.CSS_SELECTOR, f"*[data-test='inventory-item-{element}']")
+        if element == "price": return [float(price.text.replace("$", "")) for price in list]
+        return [name.text for name in list]
+
     
     def description(self):
         price_list = []
         description_list = []
         name_list = []
 
-        for link in self.links_to_products:
-            self.links_to_products = self.driver.find_elements(By.CSS_SELECTOR, "*[data-test='inventory-item-name']")
-            link.click()
+        initial_links = self.driver.find_elements(By.CSS_SELECTOR, "*[data-test='inventory-item-name']")
+        for i in range(len(initial_links)):
+        
+            current_links = self.driver.find_elements(By.CSS_SELECTOR, "*[data-test='inventory-item-name']")
+            current_links[i].click()
 
             WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.CLASS_NAME, "inventory_details_desc_container")))
 
+            # Egyedi adatok begyűjtése
             name = self.driver.find_element(By.CSS_SELECTOR, "*[data-test='inventory-item-name']").text
-            name_list.append(name)
-            
             description = self.driver.find_element(By.CSS_SELECTOR, "*[data-test='inventory-item-desc']").text
-            description_list.append(description)
-
             price = self.driver.find_element(By.CSS_SELECTOR, "*[data-test='inventory-item-price']").text
+
+            name_list.append(name)
+            description_list.append(description)
             price_list.append(price)
 
             back_to_products = self.driver.find_element(By.ID, "back-to-products")
@@ -121,14 +91,13 @@ class Inventory:
 
             WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.ID, "inventory_container")))
 
-        self.links_to_products = self.driver.find_elements(By.CSS_SELECTOR, "*[data-test='inventory-item-name']") 
-        links = [link.text for link in self.links_to_products]
-        self.prices = self.driver.find_elements(By.CSS_SELECTOR, "*[data-test='inventory-item-price']")
-        prices = [price.text for price in self.prices]
-        self.descriptions = self.driver.find_elements(By.CLASS_NAME, "inventory_item_desc")
-        descriptions = [desc.text for desc in self.descriptions]
+    
+        final_links = [link.text for link in self.driver.find_elements(By.CSS_SELECTOR, "*[data-test='inventory-item-name']")]
+        final_prices = [price.text for price in self.driver.find_elements(By.CSS_SELECTOR, "*[data-test='inventory-item-price']")]
+        final_descriptions = [desc.text for desc in self.driver.find_elements(By.CLASS_NAME, "inventory_item_desc")]
 
-        return price_list, description_list, name_list, links, prices, descriptions
+        return price_list, description_list, name_list, final_links, final_prices, final_descriptions
+
 
     def basket_in_inventory(self):
         max_attempts = 10

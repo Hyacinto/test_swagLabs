@@ -4,44 +4,50 @@ from selenium.webdriver.firefox.options import Options
 from pages.login_page import Login
 from pages.utilities import Utilities
 
-# Helper function to initialization of Selenium and the data extraction
-def init_browser_and_get_data():
+# Helper function to extract user data only
+def get_user_data():
     options = Options()
     options.headless = True
     driver = webdriver.Firefox(options=options)
     driver.get("https://www.saucedemo.com/")
     login_page = Login(driver)
-    usernames = login_page.usernames
-    password = login_page.password
-    return driver, login_page, usernames, password
+    usernames = login_page.get_usernames()  # Fetch usernames
+    password = login_page.get_password()   # Fetch password
+    driver.quit()  # Close browser after data extraction
+    return usernames, password
 
+# Dynamic parameterization without redundant driver initialization
+def pytest_generate_tests(metafunc):
+    if "username" in metafunc.fixturenames:
+        usernames, _ = get_user_data()  # Only extract usernames
+        metafunc.parametrize("username", usernames)
+
+# Fixture to handle setup and teardown for Selenium
 @pytest.fixture(scope="class")
 def setup_teardown():
-    driver, login_page, usernames, password = init_browser_and_get_data()
+    options = Options()
+    options.headless = True
+    driver = webdriver.Firefox(options=options)
+    driver.get("https://www.saucedemo.com/")
+    login_page = Login(driver)
+    usernames, password = get_user_data()  # Reuse helper function for consistency
 
     yield driver, login_page, usernames, password
 
     driver.quit()
 
-# Dynamic parametering
-def pytest_generate_tests(metafunc):
-    if "username" in metafunc.fixturenames:
-        _, _, usernames, _ = init_browser_and_get_data()
-        metafunc.parametrize("username", usernames)
-
 # Test function
 def test_login(username, setup_teardown):
-    driver, login_page, usernames, password = setup_teardown
+    driver, login_page, _, password = setup_teardown
 
     expected_result = False
     if username == "locked_out_user":
         expected_result = True
 
-    # Login
+    # Perform login
     login_page.login(username, password)
-    assert login_page.error_message() == expected_result
+    assert login_page.has_error_message() == expected_result
 
-    # Logout, after a successful login
+    # Logout after a successful login
     if driver.current_url == "https://www.saucedemo.com/inventory.html":
         Utilities.logout(driver)
-
