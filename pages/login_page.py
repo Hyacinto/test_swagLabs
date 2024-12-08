@@ -10,7 +10,6 @@ class Login:
         self.login_button = (By.ID, "login-button")
 
     def get_usernames(self):
-        """Lekéri a felhasználóneveket a bejelentkezési oldalon."""
         WebDriverWait(self.driver, 3).until(
             EC.presence_of_element_located((By.ID, "login_credentials"))
         )
@@ -18,7 +17,6 @@ class Login:
         return credentials[1:]  # Az első sor általában cím
 
     def get_password(self):
-        """Lekéri a jelszót a bejelentkezési oldalról."""
         WebDriverWait(self.driver, 3).until(
             EC.presence_of_element_located((By.XPATH, "//div[@class='login_password']"))
         )
@@ -26,29 +24,26 @@ class Login:
         return element.text.split(":")[-1].strip()
 
     def enter_username(self, username):
-        """Beírja a felhasználónevet."""
+
         WebDriverWait(self.driver, 1).until(
             EC.visibility_of_element_located(self.username_input)
         ).send_keys(username)
 
     def enter_password(self, password):
-        """Beírja a jelszót."""
         WebDriverWait(self.driver, 1).until(
             EC.visibility_of_element_located(self.password_input)
         ).send_keys(password)
 
     def click_login_button(self):
-        """Kattint a bejelentkezés gombra."""
         WebDriverWait(self.driver, 1).until(
             EC.element_to_be_clickable(self.login_button)
         ).click()
 
     def has_error_message(self):
-        """Ellenőrzi, hogy megjelenik-e hibás bejelentkezési üzenet."""
         return len(self.driver.find_elements(By.CSS_SELECTOR, '*[data-test="error"]')) > 0
 
     def login(self, username, password):
-        """Bejelentkezés a megadott felhasználónévvel és jelszóval."""
         self.enter_username(username)
         self.enter_password(password)
         self.click_login_button()
+        
