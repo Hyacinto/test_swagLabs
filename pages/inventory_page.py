@@ -2,16 +2,17 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import NoSuchElementException
+from pages.utilities import Utilities
 
 class Inventory:
     def __init__(self, driver):
         self.driver = driver
         self.basket = driver.find_element(By.CSS_SELECTOR,"*[data-test='shopping-cart-link']")
         self.links_to_products = driver.find_elements(By.CSS_SELECTOR, "*[data-test='inventory-item-name']")
-        self.prices = driver.find_elements(By.CSS_SELECTOR, "*[data-test='inventory-item-price']")
+        self.prices_inventory = Utilities.price_list(driver)
         self.select_element = driver.find_element(By.CLASS_NAME, "product_sort_container")
-        self.descriptions = driver.find_elements(By.CLASS_NAME, "inventory_item_desc")
+        self.descriptions_inventory = Utilities.description_list(driver)
+        self.titles_inventory = Utilities.title_list(driver)
         self.dropdown = Select(self.select_element)
         self.add_buttons = driver.find_elements(By.XPATH, "//button[contains(@id, 'add')]")
 
@@ -20,13 +21,6 @@ class Inventory:
     def image_links(self):
         images = self.driver.find_elements(By.CSS_SELECTOR, ".inventory_item_img img")
         return [img.get_attribute("src") for img in images]
-    
-    
-    def item_counter(self, default=0):
-        try:
-            return int(self.driver.find_element(By.CSS_SELECTOR, "[data-test='shopping-cart-badge']").text)
-        except NoSuchElementException:
-            return default
     
     def product_img(self):
         product_img_links = []
@@ -49,11 +43,8 @@ class Inventory:
         return product_img_links
     
     def expected_list(self,list,is_reverse):
+        return sorted(list, reverse=is_reverse)        
         
-        if list == "price":
-            return sorted([float(price.text.replace("$", "")) for price in self.prices], reverse=is_reverse)
-        return sorted([name.text for name in self.links_to_products], reverse=is_reverse)
-
     def select(self,index,element):
         self.select_element = self.driver.find_element(By.CLASS_NAME, "product_sort_container")
         self.dropdown = Select(self.select_element)
@@ -63,11 +54,10 @@ class Inventory:
         if element == "price": return [float(price.text.replace("$", "")) for price in list]
         return [name.text for name in list]
 
-    
     def description(self):
-        price_list = []
-        description_list = []
-        name_list = []
+        prices_item_page = []
+        descriptions_item_page = []
+        names_item_page = []
 
         initial_links = self.driver.find_elements(By.CSS_SELECTOR, "*[data-test='inventory-item-name']")
         for i in range(len(initial_links)):
@@ -79,24 +69,18 @@ class Inventory:
 
             name = self.driver.find_element(By.CSS_SELECTOR, "*[data-test='inventory-item-name']").text
             description = self.driver.find_element(By.CSS_SELECTOR, "*[data-test='inventory-item-desc']").text
-            price = self.driver.find_element(By.CSS_SELECTOR, "*[data-test='inventory-item-price']").text
+            price = float(self.driver.find_element(By.CSS_SELECTOR, "*[data-test='inventory-item-price']").text.replace("$", ""))
 
-            name_list.append(name)
-            description_list.append(description)
-            price_list.append(price)
+            names_item_page.append(name)
+            descriptions_item_page.append(description)
+            prices_item_page.append(price)
 
             back_to_products = self.driver.find_element(By.ID, "back-to-products")
             back_to_products.click()
 
             WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.ID, "inventory_container")))
 
-    
-        final_links = [link.text for link in self.driver.find_elements(By.CSS_SELECTOR, "*[data-test='inventory-item-name']")]
-        final_prices = [price.text for price in self.driver.find_elements(By.CSS_SELECTOR, "*[data-test='inventory-item-price']")]
-        final_descriptions = [desc.text for desc in self.driver.find_elements(By.CLASS_NAME, "inventory_item_desc")]
-
-        return price_list, description_list, name_list, final_links, final_prices, final_descriptions
-
+        return prices_item_page, descriptions_item_page, names_item_page
 
     def basket_in_inventory(self):
         max_attempts = 10
@@ -165,7 +149,7 @@ class Inventory:
     def to_the_cart(self):
         self.basket.click()
 
-    def items_in_basket_desc(self):
+    def items_added_to_the_basket(self):
         containers = self.driver.find_elements(By.CLASS_NAME,"inventory_item_description")
 
         name = []

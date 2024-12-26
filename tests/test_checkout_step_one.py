@@ -11,6 +11,14 @@ checkout_data = [
         ("", "", "")
     ]
 
+def core_process(driver):
+    inventory_page = Inventory(driver)
+    inventory_page.basket_in_inventory()
+    inventory_page.to_the_cart()
+    
+    cart_page = Cart(driver)
+    cart_page.to_the_checkout()
+
 @pytest.mark.parametrize("first_name, last_name, postal_code", checkout_data)
 def test_fill_the_fields(username, setup_teardown, first_name, last_name, postal_code):
     driver, login_page, _, password = setup_teardown
@@ -18,11 +26,9 @@ def test_fill_the_fields(username, setup_teardown, first_name, last_name, postal
         pytest.fail(f"Test failed intentionally for user: {username}")
         driver.quit()
     login_page.login(username, password)
-    inventory_page = Inventory(driver)
-    inventory_page.basket_in_inventory()
-    inventory_page.to_the_cart()
-    cart_page = Cart(driver)
-    cart_page.to_the_checkout()
+
+    core_process(driver)
+
     checkout_step_one_page = Checkout_step_one(driver)
     checkout_step_one_page.fill_the_fields(first_name, last_name, postal_code)
     checkout_step_one_page.continue_checkout()
@@ -38,11 +44,9 @@ def test_cancel_checkout(username, setup_teardown):
         pytest.fail(f"Test failed intentionally for user: {username}")
         driver.quit()
     login_page.login(username, password)
-    inventory_page = Inventory(driver)
-    inventory_page.basket_in_inventory()
-    inventory_page.to_the_cart()
-    cart_page = Cart(driver)
-    cart_page.to_the_checkout()
+
+    core_process(driver)
+
     checkout_step_one_page = Checkout_step_one(driver)
     checkout_step_one_page.cancel_checkout()
     

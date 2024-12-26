@@ -75,10 +75,10 @@ def test_selector_menu(username, setup_teardown):
     inventory_page = Inventory(driver)
 
     assert (
-    inventory_page.expected_list("name",False) == inventory_page.select(0,"name") 
-    and inventory_page.expected_list("name",True) == inventory_page.select(1,"name")
-    and inventory_page.expected_list("price",False) == inventory_page.select(2,"price")
-    and inventory_page.expected_list("price",True) == inventory_page.select(3,"price")
+    inventory_page.expected_list(inventory_page.titles_inventory,False) == inventory_page.select(0,"name") 
+    and inventory_page.expected_list(inventory_page.titles_inventory,True) == inventory_page.select(1,"name")
+    and inventory_page.expected_list(inventory_page.prices_inventory,False) == inventory_page.select(2,"price")
+    and inventory_page.expected_list(inventory_page.prices_inventory,True) == inventory_page.select(3,"price")
     )
 
 def test_inventory_page_desc_vs_product_page_desc(username, setup_teardown):
@@ -89,12 +89,12 @@ def test_inventory_page_desc_vs_product_page_desc(username, setup_teardown):
     login_page.login(username, password)
 
     inventory_page = Inventory(driver)  
-    price_list, description_list, name_list, links, prices, descriptions = inventory_page.description()
+    prices_item_page, descriptions_item_page, names_item_page = inventory_page.description()
 
     assert(
-        price_list == prices
-        and description_list == descriptions
-        and name_list == links
+        prices_item_page == inventory_page.prices_inventory
+        and descriptions_item_page == inventory_page.descriptions_inventory
+        and names_item_page == inventory_page.titles_inventory
     )
 
 def test_put_items_in_basket_at_inventory_page(username, setup_teardown):

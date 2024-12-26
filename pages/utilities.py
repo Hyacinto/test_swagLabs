@@ -40,4 +40,15 @@ class Utilities:
         except NoSuchElementException:
             return default
         
-     
+    @staticmethod
+    def price_list(driver):
+        return [float(price.text.replace("$", "")) for price in driver.find_elements(By.CLASS_NAME, "inventory_item_price")]
+    
+    @staticmethod
+    def description_list(driver):
+        return [desc.text for desc in driver.find_elements(By.CLASS_NAME, "inventory_item_desc")]
+    
+    @staticmethod
+    def title_list(driver):
+        return [title.text for title in driver.find_elements(By.CLASS_NAME,"inventory_item_name")]
+    

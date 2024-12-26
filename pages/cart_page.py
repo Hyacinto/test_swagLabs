@@ -1,12 +1,13 @@
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
+from pages.utilities import Utilities
 
 class Cart:
     def __init__(self, driver):
        self.driver = driver
-       self.price_cart = [float(price.text.replace("$", "")) for price in driver.find_elements(By.CLASS_NAME, "inventory_item_price")]
-       self.description_cart = [desc.text for desc in driver.find_elements(By.CLASS_NAME, "inventory_item_desc")]
-       self.title_cart =  [title.text for title in driver.find_elements(By.CLASS_NAME,"inventory_item_name")]
+       self.prices_cart = Utilities.price_list(driver)
+       self.descriptions_cart = Utilities.description_list(driver)
+       self.titles_cart =  Utilities.title_list(driver)
        self.checkout_button = driver.find_element(By.ID,"checkout")
        self.continue_button = driver.find_element(By.ID,"continue-shopping")
        self.remove_buttons = driver.find_elements(By.XPATH, "//button[contains(@id, 'remove')]")

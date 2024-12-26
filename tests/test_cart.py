@@ -11,14 +11,14 @@ def test_items_are_the_same(username, setup_teardown):
     login_page.login(username, password) 
     inventory_page = Inventory(driver)
     inventory_page.basket_in_inventory()
-    name,description,price = inventory_page.items_in_basket_desc()
+    names_added,descriptions_added,prices_added = inventory_page.items_added_to_the_basket()
     inventory_page.to_the_cart()
     cart_page = Cart(driver)
 
     assert (
-        name == cart_page.title_cart
-        and description == cart_page.description_cart
-        and price == cart_page.price_cart
+        names_added == cart_page.titles_cart
+        and descriptions_added == cart_page.descriptions_cart
+        and prices_added == cart_page.prices_cart
     )
 
 def test_remove_items_from_cart(username, setup_teardown):
