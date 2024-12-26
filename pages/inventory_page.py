@@ -7,9 +7,9 @@ from selenium.common.exceptions import NoSuchElementException
 class Inventory:
     def __init__(self, driver):
         self.driver = driver
-        self.basket = (By.CSS_SELECTOR,"*[data-test='shopping-cart-link']")
-        self.links_to_products = self.driver.find_elements(By.CSS_SELECTOR, "*[data-test='inventory-item-name']")
-        self.prices = self.driver.find_elements(By.CSS_SELECTOR, "*[data-test='inventory-item-price']")
+        self.basket = driver.find_element(By.CSS_SELECTOR,"*[data-test='shopping-cart-link']")
+        self.links_to_products = driver.find_elements(By.CSS_SELECTOR, "*[data-test='inventory-item-name']")
+        self.prices = driver.find_elements(By.CSS_SELECTOR, "*[data-test='inventory-item-price']")
         self.select_element = driver.find_element(By.CLASS_NAME, "product_sort_container")
         self.descriptions = driver.find_elements(By.CLASS_NAME, "inventory_item_desc")
         self.dropdown = Select(self.select_element)
@@ -77,7 +77,6 @@ class Inventory:
 
             WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.CLASS_NAME, "inventory_details_desc_container")))
 
-            # Egyedi adatok begyűjtése
             name = self.driver.find_element(By.CSS_SELECTOR, "*[data-test='inventory-item-name']").text
             description = self.driver.find_element(By.CSS_SELECTOR, "*[data-test='inventory-item-desc']").text
             price = self.driver.find_element(By.CSS_SELECTOR, "*[data-test='inventory-item-price']").text
@@ -155,13 +154,43 @@ class Inventory:
 
             WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".inventory_details_img")))
 
-            add_button = self.driver.find_element(By.XPATH, "//button[contains(@id, 'remove')]")
-            add_button.click()
+            remove_button = self.driver.find_element(By.XPATH, "//button[contains(@id, 'remove')]")
+            remove_button.click()
 
             back_to_products = self.driver.find_element(By.ID, "back-to-products")
             back_to_products.click()
 
             WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.ID, "inventory_container")))
+
+    def to_the_cart(self):
+        self.basket.click()
+
+    def items_in_basket_desc(self):
+        containers = self.driver.find_elements(By.CLASS_NAME,"inventory_item_description")
+
+        name = []
+        description = []
+        price = []
+
+        for container in containers:
+
+            button = container.find_element(By.XPATH, ".//button[contains(@id, 'remove')]").text
+            
+            if button == "Remove":
+
+                item_name = container.find_element(By.CLASS_NAME, "inventory_item_name").text
+                name.append(item_name)
+
+                item_description = container.find_element(By.CLASS_NAME, "inventory_item_desc").text
+                description.append(item_description)
+                
+                item_price = float(container.find_element(By.CLASS_NAME, "inventory_item_price").text.replace("$", ""))
+                price.append(item_price)
+
+        return name,description,price
+
+
+
 
 
 

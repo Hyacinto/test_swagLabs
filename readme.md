@@ -51,6 +51,5 @@ Current Development Status
 
 This project is currently under active development. Some features may be incomplete or under review. Here are the current points of development:
 
-* Refinement of visual regression tests: Further integration of Applitools for automated visual comparisons.
 * Stabilization of the framework: I am improving error handling and test reliability.
 * Test coverage expansion: I am adding more test cases to cover additional functionalities of the Sauce Demo app.
