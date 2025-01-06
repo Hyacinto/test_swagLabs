@@ -8,11 +8,14 @@ def test_items_are_the_same(username, setup_teardown):
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
         driver.quit()
-    login_page.login(username, password) 
+
+    login_page.login(username, password)
+
     inventory_page = Inventory(driver)
     inventory_page.basket_in_inventory()
     names_added,descriptions_added,prices_added = inventory_page.items_added_to_the_basket()
     inventory_page.to_the_cart()
+
     cart_page = Cart(driver)
 
     assert (
@@ -26,10 +29,13 @@ def test_remove_items_from_cart(username, setup_teardown):
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
         driver.quit()
-    login_page.login(username, password) 
+    
+    login_page.login(username, password)
+
     inventory_page = Inventory(driver)
     inventory_page.basket_in_inventory()
     inventory_page.to_the_cart()
+
     cart_page = Cart(driver)
     cart_page.empty_cart()
 
@@ -40,9 +46,13 @@ def test_neverending_shoping(username, setup_teardown):
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
         driver.quit()
+
     login_page.login(username, password) 
+
     inventory_page = Inventory(driver)
+    inventory_page.basket_in_inventory()
     inventory_page.to_the_cart()
+
     cart_page = Cart(driver)
     cart_page.continue_shopping()
 
@@ -51,3 +61,21 @@ def test_neverending_shoping(username, setup_teardown):
 
     assert actual_URL == expected_URL
 
+def test_checkout_with_empty_cart(username, setup_teardown):
+    driver, login_page, _, password = setup_teardown
+    if username == "locked_out_user":
+        pytest.fail(f"Test failed intentionally for user: {username}")
+        driver.quit()
+
+    login_page.login(username, password) 
+
+    inventory_page = Inventory(driver)
+    inventory_page.to_the_cart()
+
+    cart_page = Cart(driver)
+    cart_page.to_the_checkout()
+
+    expected_URL = "https://www.saucedemo.com/cart.html"
+    actual_URL = driver.current_url
+
+    assert actual_URL == expected_URL

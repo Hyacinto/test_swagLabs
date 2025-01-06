@@ -10,6 +10,11 @@ class Utilities:
         self.burger_menu = (By.ID, "react-burger-menu-btn")
 
     @staticmethod
+    def has_error_message(driver):
+        return len(driver.find_elements(By.CSS_SELECTOR, '*[data-test="error"]')) > 0
+    
+    
+    @staticmethod
     def logout(driver):
         logout = (By.ID, "logout_sidebar_link")
         WebDriverWait(driver, 3).until(EC.element_to_be_clickable(logout)).click()
@@ -18,6 +23,11 @@ class Utilities:
     def reset(driver):
         reset_app_state = (By.ID, "reset_sidebar_link")
         WebDriverWait(driver, 3).until(EC.element_to_be_clickable(reset_app_state)).click()
+
+    @staticmethod
+    def about(driver):
+        about = (By.ID, "about_sidebar_link")
+        WebDriverWait(driver, 3).until(EC.element_to_be_clickable(about)).click()
 
     @staticmethod
     def open_menu(driver):
@@ -51,4 +61,6 @@ class Utilities:
     @staticmethod
     def title_list(driver):
         return [title.text for title in driver.find_elements(By.CLASS_NAME,"inventory_item_name")]
+    
+
     
