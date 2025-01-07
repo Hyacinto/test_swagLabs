@@ -3,6 +3,8 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from pages.utilities import Utilities
+from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoAlertPresentException
 
 class Inventory:
     def __init__(self, driver):
@@ -45,15 +47,30 @@ class Inventory:
     def expected_list(self,list,is_reverse):
         return sorted(list, reverse=is_reverse)        
         
-    def select(self,index,element):
+    def select(self,index,element, driver):
         self.select_element = self.driver.find_element(By.CLASS_NAME, "product_sort_container")
         self.dropdown = Select(self.select_element)
         self.dropdown.select_by_index(index)
-        WebDriverWait(self.driver, 10).until( EC.presence_of_all_elements_located((By.CSS_SELECTOR, f"*[data-test='inventory-item-{element}']")) )
-        list = self.driver.find_elements(By.CSS_SELECTOR, f"*[data-test='inventory-item-{element}']")
-        if element == "price": return [float(price.text.replace("$", "")) for price in list]
-        return [name.text for name in list]
 
+        try:
+            alert = driver.switch_to.alert
+            alert.accept()
+ 
+        except NoAlertPresentException:
+            WebDriverWait(self.driver, 10).until( EC.presence_of_all_elements_located((By.CSS_SELECTOR, f"*[data-test='inventory-item-{element}']")) )
+            list = self.driver.find_elements(By.CSS_SELECTOR, f"*[data-test='inventory-item-{element}']")
+            if element == "price": return [float(price.text.replace("$", "")) for price in list]
+            return [name.text for name in list]
+
+    def price_converter(self):
+
+        try:
+            price = float(self.driver.find_element(By.CSS_SELECTOR, "*[data-test='inventory-item-price']").text.replace("$", ""))
+        except ValueError:
+            return False
+        
+        return price
+    
     def description(self):
         prices_item_page = []
         descriptions_item_page = []
@@ -69,8 +86,7 @@ class Inventory:
 
             name = self.driver.find_element(By.CSS_SELECTOR, "*[data-test='inventory-item-name']").text
             description = self.driver.find_element(By.CSS_SELECTOR, "*[data-test='inventory-item-desc']").text
-            price = float(self.driver.find_element(By.CSS_SELECTOR, "*[data-test='inventory-item-price']").text.replace("$", ""))
-
+            price = self.price_converter()
             names_item_page.append(name)
             descriptions_item_page.append(description)
             prices_item_page.append(price)
@@ -138,8 +154,12 @@ class Inventory:
 
             WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".inventory_details_img")))
 
-            remove_button = self.driver.find_element(By.XPATH, "//button[contains(@id, 'remove')]")
-            remove_button.click()
+            try:
+                remove_button = self.driver.find_element(By.XPATH, "//button[contains(@id, 'remove')]")
+                remove_button.click()
+            except NoSuchElementException:
+                print("The Remove button not found, skipping")
+        
 
             back_to_products = self.driver.find_element(By.ID, "back-to-products")
             back_to_products.click()
@@ -150,17 +170,16 @@ class Inventory:
         self.basket.click()
 
     def items_added_to_the_basket(self):
-        containers = self.driver.find_elements(By.CLASS_NAME,"inventory_item_description")
+
+        containers = self.driver.find_elements(By.CLASS_NAME, "inventory_item_description")
 
         name = []
         description = []
         price = []
 
         for container in containers:
-
-            button = container.find_element(By.XPATH, ".//button[contains(@id, 'remove')]").text
             
-            if button == "Remove":
+            if "Remove" in container.text:
 
                 item_name = container.find_element(By.CLASS_NAME, "inventory_item_name").text
                 name.append(item_name)
@@ -171,7 +190,14 @@ class Inventory:
                 item_price = float(container.find_element(By.CLASS_NAME, "inventory_item_price").text.replace("$", ""))
                 price.append(item_price)
 
+        with open("items_in_basket.txt", "w") as file:
+            for item in name:
+                file.write(item + "\n")
+
         return name,description,price
+
+    def main_conatiner(self):
+        return self.driver.find_element(By.ID, "inventory_container")
 
 
 
