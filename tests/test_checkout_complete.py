@@ -6,7 +6,7 @@ from pages.checkout_step_two_page import Checkout_step_two
 from pages.checkout_complete_page import Checkout_complete
 from pages.utilities import Utilities
 
-def core_process(driver):
+def core_process(driver, username):
     inventory_page = Inventory(driver)
     inventory_page.basket_in_inventory()
     inventory_page.to_the_cart()
@@ -18,6 +18,10 @@ def core_process(driver):
     checkout_step_one_page.fill_the_fields("Elek", "Teszt", 5000)
     checkout_step_one_page.continue_checkout()
 
+    if  Utilities.has_error_message(driver) == True:
+        pytest.fail(f"Test failed intentionally for user: {username}")
+        driver.quit()
+
     checkout_step_two_page = Checkout_step_two(driver)
     checkout_step_two_page.checkout_finish()
 
@@ -28,7 +32,11 @@ def test_finished_checkout_and_back(username, setup_teardown):
         driver.quit()
     login_page.login(username, password)
     
-    core_process(driver)
+    core_process(driver, username)
+
+    if driver.current_url != "https://www.saucedemo.com/checkout-complete.html":
+        pytest.fail(f"Test failed intentionally for user: {username}")
+        driver.quit()
 
     checkout_complete_page = Checkout_complete(driver)
     checkout_complete_page.back_to_products()
@@ -45,7 +53,7 @@ def test_finished_checkout(username, setup_teardown):
         driver.quit()
     login_page.login(username, password)
     
-    core_process(driver)
+    core_process(driver, username)
     
     expected_result = 0
     actual_result = Utilities.item_counter(driver)
