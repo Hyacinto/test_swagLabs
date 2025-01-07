@@ -22,3 +22,9 @@ class Checkout_step_one:
 
     def cancel_checkout(self):
         self.cancel_button.click()
+
+    def get_all_fields(self):
+        first_name = self.first_name_field.text
+        last_name = self.last_name_field.text
+        postal_code = self.postal_code_field.text
+        return first_name, last_name, postal_code

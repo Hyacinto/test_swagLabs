@@ -30,6 +30,11 @@ class Utilities:
         WebDriverWait(driver, 3).until(EC.element_to_be_clickable(about)).click()
 
     @staticmethod
+    def all_items(driver):
+        all_items = (By.ID, "inventory_sidebar_link")
+        WebDriverWait(driver, 3).until(EC.element_to_be_clickable(all_items)).click()
+
+    @staticmethod
     def open_menu(driver):
         burger_menu = (By.ID, "react-burger-menu-btn")
         WebDriverWait(driver, 3).until(EC.element_to_be_clickable(burger_menu)).click()
