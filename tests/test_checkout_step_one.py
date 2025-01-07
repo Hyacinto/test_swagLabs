@@ -2,6 +2,7 @@ import pytest
 from pages.inventory_page import Inventory
 from pages.cart_page import Cart
 from pages.checkout_step_one_page import Checkout_step_one
+from pages.utilities import Utilities
 
 checkout_data = [
         ("Elek", "Teszt", "5000"),
@@ -33,10 +34,10 @@ def test_fill_the_fields(username, setup_teardown, first_name, last_name, postal
     checkout_step_one_page.fill_the_fields(first_name, last_name, postal_code)
     checkout_step_one_page.continue_checkout()
     
-    if first_name == "" or last_name == "" or postal_code == "":
-        assert checkout_step_one_page.has_error_message()
+    if first_name == "" or last_name == "" or postal_code == "" or username == "problem_user":
+        assert Utilities.has_error_message(driver)
     else:
-        assert not checkout_step_one_page.has_error_message()
+        assert not Utilities.has_error_message(driver)
 
 def test_cancel_checkout(username, setup_teardown):
     driver, login_page, _, password = setup_teardown
@@ -54,4 +55,23 @@ def test_cancel_checkout(username, setup_teardown):
     actual_URL = driver.current_url
 
     assert actual_URL == expected_URL
+
+def test_fields_show_the_text(username, setup_teardown):
+    driver, login_page, _, password = setup_teardown
+    if username == "locked_out_user":
+        pytest.fail(f"Test failed intentionally for user: {username}")
+        driver.quit()
+    login_page.login(username, password)
+
+    core_process(driver)
+
+    checkout_step_one_page = Checkout_step_one(driver)
+    checkout_step_one_page.fill_the_fields("Elek", "Teszt", "5000")
+    first_name, last_name, postal_code = checkout_step_one_page.get_all_fields()
+    
+    assert first_name == "Elek"
+    assert last_name == "Teszt"
+    assert postal_code == "5000"
+    
+   
 

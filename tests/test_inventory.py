@@ -75,10 +75,10 @@ def test_selector_menu(username, setup_teardown):
     inventory_page = Inventory(driver)
 
     assert (
-    inventory_page.expected_list(inventory_page.titles_inventory,False) == inventory_page.select(0,"name") 
-    and inventory_page.expected_list(inventory_page.titles_inventory,True) == inventory_page.select(1,"name")
-    and inventory_page.expected_list(inventory_page.prices_inventory,False) == inventory_page.select(2,"price")
-    and inventory_page.expected_list(inventory_page.prices_inventory,True) == inventory_page.select(3,"price")
+    inventory_page.expected_list(inventory_page.titles_inventory,False) == inventory_page.select(0,"name", driver) 
+    and inventory_page.expected_list(inventory_page.titles_inventory,True) == inventory_page.select(1,"name", driver)
+    and inventory_page.expected_list(inventory_page.prices_inventory,False) == inventory_page.select(2,"price", driver)
+    and inventory_page.expected_list(inventory_page.prices_inventory,True) == inventory_page.select(3,"price", driver)
     )
 
 def test_inventory_page_desc_vs_product_page_desc(username, setup_teardown):
@@ -121,6 +121,7 @@ def test_take_out_items_from_basket_at_inventory_page(username, setup_teardown):
     inventory_page = Inventory(driver)
     inventory_page.basket_in_inventory()
     inventory_page.basket_out_inventory()
+
     actual_result = Utilities.item_counter(driver)
     expected_result = 0
 
@@ -145,13 +146,79 @@ def test_take_out_items_from_basket_at_product_page(username, setup_teardown):
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
         driver.quit()
+
     login_page.login(username, password)
 
     inventory_page = Inventory(driver)
     inventory_page.basket_in_item()
     inventory_page.basket_out_items()
+
     actual_result = Utilities.item_counter(driver)
     expected_result = 0
 
     assert actual_result == expected_result
+
+def test_side_bar_about(username, setup_teardown):
+    driver, login_page, _, password = setup_teardown
+
+    if username == "locked_out_user":
+        pytest.fail(f"Test failed intentionally for user: {username}")
+        driver.quit()
+
+    login_page.login(username, password)
+
+    Utilities.open_menu(driver)
+    Utilities.about(driver)
+
+    expected_URL = "https://saucelabs.com/"
+    actual_URL = driver.current_url
+
+    driver.back()
+
+    assert actual_URL == expected_URL
+
+def test_side_bar_all_items(username, setup_teardown):
+    driver, login_page, _, password = setup_teardown
+
+    if username == "locked_out_user":
+        pytest.fail(f"Test failed intentionally for user: {username}")
+        driver.quit()
+
+    login_page.login(username, password)
+
+    inventory_page = Inventory(driver)
+    inventory_page.to_the_cart()
+
+    Utilities.open_menu(driver)
+    Utilities.all_items(driver)
+
+    expected_URL = "https://www.saucedemo.com/inventory.html"
+    actual_URL = driver.current_url
+
+    assert actual_URL == expected_URL
+
+def test_after_reset_there_is_no_remove_button(username, setup_teardown):
+    driver, login_page, _, password = setup_teardown
+
+    if username == "locked_out_user":
+        pytest.fail(f"Test failed intentionally for user: {username}")
+        driver.quit()
+
+    login_page.login(username, password)
+
+    inventory_page = Inventory(driver)
+    inventory_page.basket_in_inventory()
+    containers_text = inventory_page.main_conatiner().text
+    item_counter = Utilities.item_counter(driver)
+    
+    Utilities.open_menu(driver)
+    Utilities.reset(driver)
+    Utilities.logout(driver)
+
+    assert "Remove" not in containers_text and item_counter == 0
+    
+
+
+    
+    
 
