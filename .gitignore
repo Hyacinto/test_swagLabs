@@ -154,6 +154,13 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+# Allure results and reports directories
+allure-results/
+allure-report/
+
+# Visal tests results
+.png
+
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore

@@ -20,23 +20,22 @@ def core_process(driver, username):
 
     if  Utilities.has_error_message(driver) == True:
         pytest.fail(f"Test failed intentionally for user: {username}")
-        driver.quit()
 
     checkout_step_two_page = Checkout_step_two(driver)
     checkout_step_two_page.checkout_finish()
 
 def test_finished_checkout_and_back(username, setup_teardown):
-    driver, login_page, _, password = setup_teardown
+    driver, login_page, password = setup_teardown
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
-        driver.quit()
+        
     login_page.login(username, password)
     
     core_process(driver, username)
 
     if driver.current_url != "https://www.saucedemo.com/checkout-complete.html":
         pytest.fail(f"Test failed intentionally for user: {username}")
-        driver.quit()
+        
 
     checkout_complete_page = Checkout_complete(driver)
     checkout_complete_page.back_to_products()
@@ -47,10 +46,10 @@ def test_finished_checkout_and_back(username, setup_teardown):
     assert actual_URL == expected_URL
 
 def test_finished_checkout(username, setup_teardown):
-    driver, login_page, _, password = setup_teardown
+    driver, login_page, password = setup_teardown
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
-        driver.quit()
+        
     login_page.login(username, password)
     
     core_process(driver, username)

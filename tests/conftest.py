@@ -11,19 +11,22 @@ def setup_teardown():
     driver = webdriver.Firefox(options=options)
     driver.get("https://www.saucedemo.com/")
     login_page = Login(driver)
-    usernames = login_page.get_usernames()
     password = login_page.get_password()
 
-    yield driver, login_page, usernames, password
+    yield driver, login_page, password
 
-    if driver.current_url != "https://www.saucedemo.com/":   
-        Utilities.open_menu(driver)
-        Utilities.reset(driver)
-        Utilities.logout(driver)
+    try:
+        if driver.current_url != "https://www.saucedemo.com/":   
+            Utilities.open_menu(driver)
+            Utilities.reset(driver)
+            Utilities.logout(driver)
         
-    driver.quit()
+        driver.quit()
 
-def pytest_generate_tests(metafunc):
+    finally:
+        driver.quit()
+
+def pytest_generate_tests(metafunc):    
     if "username" in metafunc.fixturenames:
         options = Options()
         options.headless = True

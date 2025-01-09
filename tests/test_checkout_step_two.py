@@ -22,7 +22,7 @@ def core_process(driver, username):
         driver.quit()
 
 def test_exit_checkout(username, setup_teardown):
-    driver, login_page, _, password = setup_teardown
+    driver, login_page, password = setup_teardown
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
         driver.quit()
@@ -39,7 +39,7 @@ def test_exit_checkout(username, setup_teardown):
     assert actual_URL == expected_URL
 
 def test_checkout(username, setup_teardown):
-    driver, login_page, _, password = setup_teardown
+    driver, login_page, password = setup_teardown
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
         driver.quit()
@@ -56,10 +56,11 @@ def test_checkout(username, setup_teardown):
     assert actual_URL == expected_URL
 
 def test_do_the_math(username, setup_teardown):
-    driver, login_page, _, password = setup_teardown
+    driver, login_page, password = setup_teardown
+
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
-        driver.quit()
+
     login_page.login(username, password)
     
     core_process(driver, username)    
@@ -71,10 +72,11 @@ def test_do_the_math(username, setup_teardown):
     assert actual_result == expected_result
 
 def test_compare_items(username, setup_teardown):
-    driver, login_page, _, password = setup_teardown
+    driver, login_page, password = setup_teardown
+
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
-        driver.quit()
+   
     login_page.login(username, password)
     
     inventory_page = Inventory(driver)
@@ -93,7 +95,6 @@ def test_compare_items(username, setup_teardown):
     
     if  Utilities.has_error_message(driver) == True:
         pytest.fail(f"Test failed intentionally for user: {username}")
-        driver.quit()
 
     checkout_step_two_page = Checkout_step_two(driver)
     
