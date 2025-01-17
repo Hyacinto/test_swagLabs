@@ -9,20 +9,6 @@ class Login:
         self.password_input = (By.ID, "password")
         self.login_button = (By.ID, "login-button")
 
-    def get_usernames(self):
-        WebDriverWait(self.driver, 3).until(
-            EC.presence_of_element_located((By.ID, "login_credentials"))
-        )
-        credentials = self.driver.find_element(By.ID, "login_credentials").text.split("\n")
-        return credentials[1:]  # Az első sor általában cím
-
-    def get_password(self):
-        WebDriverWait(self.driver, 3).until(
-            EC.presence_of_element_located((By.XPATH, "//div[@class='login_password']"))
-        )
-        element = self.driver.find_element(By.XPATH, "//div[@class='login_password']")
-        return element.text.split(":")[-1].strip()
-
     def enter_username(self, username):
 
         WebDriverWait(self.driver, 1).until(

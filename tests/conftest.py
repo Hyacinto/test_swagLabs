@@ -33,3 +33,4 @@ def setup_teardown():
             Utilities.logout(driver)
     finally:
         driver.quit()
+        

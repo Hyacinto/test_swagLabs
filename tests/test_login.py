@@ -24,3 +24,4 @@ def test_logout(username, password, setup_teardown):
     driver.back()
 
     assert driver.current_url == "https://www.saucedemo.com/"
+    

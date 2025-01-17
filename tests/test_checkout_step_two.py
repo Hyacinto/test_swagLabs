@@ -103,3 +103,4 @@ def test_compare_items(username, password, setup_teardown):
         and descriptions_in_cart == checkout_step_two_page.descriptions_checkout
         and prices_in_cart == checkout_step_two_page.prices_checkout
     )
+    
