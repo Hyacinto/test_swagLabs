@@ -24,8 +24,8 @@ def core_process(driver, username):
     checkout_step_two_page = Checkout_step_two(driver)
     checkout_step_two_page.checkout_finish()
 
-def test_finished_checkout_and_back(username, setup_teardown):
-    driver, login_page, password = setup_teardown
+def test_finished_checkout_and_back(username, password, setup_teardown):
+    driver, login_page = setup_teardown
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
         
@@ -45,8 +45,8 @@ def test_finished_checkout_and_back(username, setup_teardown):
 
     assert actual_URL == expected_URL
 
-def test_finished_checkout(username, setup_teardown):
-    driver, login_page, password = setup_teardown
+def test_finished_checkout(username, password, setup_teardown):
+    driver, login_page = setup_teardown
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
         
@@ -58,3 +58,4 @@ def test_finished_checkout(username, setup_teardown):
     actual_result = Utilities.item_counter(driver)
 
     assert actual_result == expected_result
+    

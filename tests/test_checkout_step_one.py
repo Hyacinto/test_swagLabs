@@ -21,8 +21,8 @@ def core_process(driver):
     cart_page.to_the_checkout()
 
 @pytest.mark.parametrize("first_name, last_name, postal_code", checkout_data)
-def test_fill_the_fields(username, setup_teardown, first_name, last_name, postal_code):
-    driver, login_page, password = setup_teardown
+def test_fill_the_fields(username, password, setup_teardown, first_name, last_name, postal_code):
+    driver, login_page = setup_teardown
 
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
@@ -40,8 +40,8 @@ def test_fill_the_fields(username, setup_teardown, first_name, last_name, postal
     else:
         assert not Utilities.has_error_message(driver)
 
-def test_cancel_checkout(username, setup_teardown):
-    driver, login_page, password = setup_teardown
+def test_cancel_checkout(username, password, setup_teardown):
+    driver, login_page = setup_teardown
 
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
@@ -58,8 +58,8 @@ def test_cancel_checkout(username, setup_teardown):
 
     assert actual_URL == expected_URL
 
-def test_fields_show_the_text(username, setup_teardown):
-    driver, login_page, password = setup_teardown
+def test_fields_show_the_text(username, password, setup_teardown):
+    driver, login_page = setup_teardown
 
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")

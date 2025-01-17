@@ -13,8 +13,8 @@ def way_to_the_cart(driver,username, password, login_page):
     cart_page = Cart(driver)
     return cart_page.titles_cart, cart_page.descriptions_cart, cart_page.prices_cart
 
-def test_items_are_the_same(username, setup_teardown):
-    driver, login_page, password = setup_teardown
+def test_items_are_the_same(username, password, setup_teardown):
+    driver, login_page = setup_teardown
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
         driver.quit()
@@ -34,8 +34,8 @@ def test_items_are_the_same(username, setup_teardown):
         and prices_added == cart_page.prices_cart
     )
 
-def test_remove_items_from_cart(username, setup_teardown):
-    driver, login_page, password = setup_teardown
+def test_remove_items_from_cart(username, password, setup_teardown):
+    driver, login_page = setup_teardown
 
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
@@ -51,8 +51,8 @@ def test_remove_items_from_cart(username, setup_teardown):
 
     assert Utilities.item_counter(driver) == 0
 
-def test_neverending_shoping(username, setup_teardown):
-    driver, login_page, _, password = setup_teardown
+def test_neverending_shoping(username, password, setup_teardown):
+    driver, login_page = setup_teardown
 
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
@@ -71,8 +71,8 @@ def test_neverending_shoping(username, setup_teardown):
 
     assert actual_URL == expected_URL
 
-def test_checkout_with_empty_cart(username, setup_teardown):
-    driver, login_page, password = setup_teardown
+def test_checkout_with_empty_cart(username, password, setup_teardown):
+    driver, login_page = setup_teardown
 
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
@@ -90,19 +90,19 @@ def test_checkout_with_empty_cart(username, setup_teardown):
 
     assert actual_URL == expected_URL
 
-def test_items_in_the_cart_after_logout(username, setup_teardown):
-    driver, login_page, password = setup_teardown
+def test_items_in_the_cart_after_logout(username, password, setup_teardown):
+    driver, login_page = setup_teardown
 
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
 
-    titles_before_logout, descriptions_before_logout, prices_before_logout = to_the_cart(driver,username, password, login_page)
+    titles_before_logout, descriptions_before_logout, prices_before_logout = way_to_the_cart(driver,username, password, login_page)
     counter_before_logout = Utilities.item_counter(driver)
 
     Utilities.open_menu(driver)
     Utilities.logout(driver)
 
-    titles_after_logout, descriptions_after_logout, prices_after_logout = to_the_cart(driver,username, password, login_page)
+    titles_after_logout, descriptions_after_logout, prices_after_logout = way_to_the_cart(driver,username, password, login_page)
     counter_after_logout = Utilities.item_counter(driver)
 
     assert (

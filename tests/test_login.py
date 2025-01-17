@@ -1,8 +1,8 @@
 from pages.utilities import Utilities
 import pytest
 
-def test_login(username, setup_teardown):
-    driver, login_page, password = setup_teardown
+def test_login(username, password, setup_teardown):
+    driver, login_page = setup_teardown
 
     expected_result = False
     if username == "locked_out_user":
@@ -11,8 +11,8 @@ def test_login(username, setup_teardown):
     login_page.login(username, password)
     assert Utilities.has_error_message(driver) == expected_result
 
-def test_logout(username, setup_teardown):
-    driver, login_page, password = setup_teardown
+def test_logout(username, password, setup_teardown):
+    driver, login_page = setup_teardown
 
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
