@@ -22,7 +22,8 @@ class Utilities:
     @staticmethod
     def reset(driver):
         reset_app_state = (By.ID, "reset_sidebar_link")
-        WebDriverWait(driver, 15).until(EC.element_to_be_clickable(reset_app_state)).click()
+        WebDriverWait(driver, 30).until(EC.presence_of_element_located(reset_app_state))
+        WebDriverWait(driver, 30).until(EC.element_to_be_clickable((reset_app_state))).click()
 
     @staticmethod
     def about(driver):

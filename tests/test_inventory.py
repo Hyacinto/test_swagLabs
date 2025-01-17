@@ -15,8 +15,8 @@ def check_duplicate_images(image_links):
     hashes = [get_image_hash(link) for link in image_links]
     return len(hashes) != len(set(hashes))
 
-def test_unique_item_img(username, setup_teardown):
-    driver, login_page, password = setup_teardown
+def test_unique_item_img(username, password, setup_teardown):
+    driver, login_page = setup_teardown
 
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
@@ -27,8 +27,8 @@ def test_unique_item_img(username, setup_teardown):
 
     assert not check_duplicate_images(image_links)
 
-def test_inventory_page_img_vs_product_page_img(username, setup_teardown):
-    driver, login_page, password = setup_teardown
+def test_inventory_page_img_vs_product_page_img(username, password, setup_teardown):
+    driver, login_page = setup_teardown
 
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
@@ -47,8 +47,8 @@ def test_inventory_page_img_vs_product_page_img(username, setup_teardown):
         
         assert inventory_img_hash == product_img_hash
 
-def test_visual(username, setup_teardown):
-    driver, login_page, password = setup_teardown
+def test_visual(username, password, setup_teardown):
+    driver, login_page = setup_teardown
 
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
@@ -69,8 +69,8 @@ def test_visual(username, setup_teardown):
         
         assert base_image == actual_image
 
-def test_selector_menu(username, setup_teardown):
-    driver, login_page, password = setup_teardown
+def test_selector_menu(username, password, setup_teardown):
+    driver, login_page = setup_teardown
 
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
@@ -86,8 +86,8 @@ def test_selector_menu(username, setup_teardown):
     and inventory_page.expected_list(inventory_page.prices_inventory,True) == inventory_page.select(3,"price", driver)
     )
 
-def test_inventory_page_desc_vs_product_page_desc(username, setup_teardown):
-    driver, login_page, password = setup_teardown
+def test_inventory_page_desc_vs_product_page_desc(username, password, setup_teardown):
+    driver, login_page = setup_teardown
 
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
@@ -103,8 +103,8 @@ def test_inventory_page_desc_vs_product_page_desc(username, setup_teardown):
         and names_item_page == inventory_page.titles_inventory
     )
 
-def test_put_items_in_basket_at_inventory_page(username, setup_teardown):
-    driver, login_page, password = setup_teardown
+def test_put_items_in_basket_at_inventory_page(username, password, setup_teardown):
+    driver, login_page = setup_teardown
 
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
@@ -118,8 +118,8 @@ def test_put_items_in_basket_at_inventory_page(username, setup_teardown):
 
     assert actual_result == expected_result
 
-def test_take_out_items_from_basket_at_inventory_page(username, setup_teardown):
-    driver, login_page, password = setup_teardown
+def test_take_out_items_from_basket_at_inventory_page(username, password, setup_teardown):
+    driver, login_page = setup_teardown
 
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
@@ -135,8 +135,8 @@ def test_take_out_items_from_basket_at_inventory_page(username, setup_teardown):
 
     assert actual_result == expected_result
 
-def test_put_items_in_basket_at_product_page(username, setup_teardown):
-    driver, login_page, password = setup_teardown
+def test_put_items_in_basket_at_product_page(username, password, setup_teardown):
+    driver, login_page = setup_teardown
 
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
@@ -150,8 +150,8 @@ def test_put_items_in_basket_at_product_page(username, setup_teardown):
 
     assert actual_result == expected_result
 
-def test_take_out_items_from_basket_at_product_page(username, setup_teardown):
-    driver, login_page, password = setup_teardown
+def test_take_out_items_from_basket_at_product_page(username, password, setup_teardown):
+    driver, login_page = setup_teardown
 
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
@@ -167,8 +167,8 @@ def test_take_out_items_from_basket_at_product_page(username, setup_teardown):
 
     assert actual_result == expected_result
 
-def test_side_bar_about(username, setup_teardown):
-    driver, login_page, password = setup_teardown
+def test_side_bar_about(username, password, setup_teardown):
+    driver, login_page = setup_teardown
 
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
@@ -183,8 +183,8 @@ def test_side_bar_about(username, setup_teardown):
 
     assert actual_URL == expected_URL
 
-def test_side_bar_all_items(username, setup_teardown):
-    driver, login_page, password = setup_teardown
+def test_side_bar_all_items(username, password, setup_teardown):
+    driver, login_page = setup_teardown
 
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
@@ -202,8 +202,8 @@ def test_side_bar_all_items(username, setup_teardown):
 
     assert actual_URL == expected_URL
 
-def test_after_reset_there_is_no_remove_button(username, setup_teardown):
-    driver, login_page, password = setup_teardown
+def test_after_reset_there_is_no_remove_button(username, password, setup_teardown):
+    driver, login_page = setup_teardown
 
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
@@ -228,8 +228,8 @@ screen_sizes = [
 ]
 
 @pytest.mark.parametrize("size", screen_sizes)
-def test_responsive_design(username, setup_teardown, size):
-    driver, login_page, password = setup_teardown
+def test_responsive_design(username, password, setup_teardown, size):
+    driver, login_page = setup_teardown
 
     if username == "locked_out_user":
         pytest.fail(f"Test failed intentionally for user: {username}")
