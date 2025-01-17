@@ -181,8 +181,6 @@ def test_side_bar_about(username, setup_teardown):
     expected_URL = "https://saucelabs.com/"
     actual_URL = driver.current_url
 
-    driver.back()
-
     assert actual_URL == expected_URL
 
 def test_side_bar_all_items(username, setup_teardown):
@@ -222,6 +220,24 @@ def test_after_reset_there_is_no_remove_button(username, setup_teardown):
     Utilities.logout(driver)
 
     assert "Remove" not in containers_text and item_counter == 0
+
+screen_sizes = [
+    {"width": 1920, "height": 1080},  # Desktop 
+    {"width": 768, "height": 1024},  # Tablet
+    {"width": 360, "height": 800},   # Mobile
+]
+
+@pytest.mark.parametrize("size", screen_sizes)
+def test_responsive_design(username, setup_teardown, size):
+    driver, login_page, password = setup_teardown
+
+    if username == "locked_out_user":
+        pytest.fail(f"Test failed intentionally for user: {username}")
+
+    login_page.login(username, password)
+
+    driver.set_window_size(size["width"], size["height"])
+    assert Utilities.social_media_icons(driver)
     
 
 
