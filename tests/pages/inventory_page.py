@@ -190,10 +190,6 @@ class Inventory:
                 item_price = float(container.find_element(By.CLASS_NAME, "inventory_item_price").text.replace("$", ""))
                 price.append(item_price)
 
-        with open("items_in_basket.txt", "w") as file:
-            for item in name:
-                file.write(item + "\n")
-
         return name,description,price
 
     def main_conatiner(self):
