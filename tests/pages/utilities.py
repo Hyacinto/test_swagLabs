@@ -73,3 +73,5 @@ class Utilities:
         social = driver.find_element(By.CLASS_NAME, "social")
         return social.is_displayed()
     
+
+    
