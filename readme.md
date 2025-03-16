@@ -1,6 +1,4 @@
-SwagLabs Test Automation Project
-================================
-
+# SwagLabs Test Automation Project
 Overview
 --------
 
@@ -37,19 +35,22 @@ Setup Instructions
         git clone <repository-url>
         cd test_swagLabs
 
+Setup Instructions
+------------------
 
-2. Install dependencies: Make sure you have Python installed. Then, install the required libraries by running:
+1. Clone the repository:
 
-        pip install -r requirements.txt
+        git clone <repository-url>
+        cd test_swagLabs
 
-3. Run the tests: You can run the tests using pytest:
+2. Build the Docker image:
 
-        pytest tests/test_inventory.py::test_visual
+        docker build -t test_swaglabs .
 
-Current Development Status
---------------------------
+3. Run the Docker container:
 
-This project is currently under active development. Some features may be incomplete or under review. Here are the current points of development:
+        docker run --rm test_swaglabs
 
-* Stabilization of the framework: I am improving error handling and test reliability.
-* Test coverage expansion: I am adding more test cases to cover additional functionalities of the Sauce Demo app.
+This will build the Docker image and run the tests inside the Docker container. The test results and logs will be available at [http://localhost:5050](http://localhost:5050), provided by Allure Report.
+
+
