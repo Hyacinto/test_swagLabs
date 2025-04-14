@@ -1,6 +1,8 @@
 SwagLabs Test Automation Project
 ================================
 
+![Tested!](swag_tested.png)
+
 Overview
 --------
 
