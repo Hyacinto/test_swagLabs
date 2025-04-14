@@ -40,5 +40,5 @@ Setup Instructions
         docker build -t test_swaglabs .
 3. Run the Docker container:
         docker run --rm test_swaglabs
-This will build the Docker image and run the tests inside the Docker container. The test results and logs will be available at [http://localhost:5050](http://localhost:5050), provided by Allure Report.
+This will build the Docker image and run the tests inside the Docker container. The test results and logs will be available at [http://localhost:5050](http://localhost:5050), provided by [![Allure](https://img.shields.io/badge/Allure%20Report-3980F6?style=for-the-badge&logo=allure&logoColor=white)](https://docs.qameta.io/allure/).
 
